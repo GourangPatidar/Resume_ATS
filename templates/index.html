@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATS Resume Expert</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .card {
+            padding: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="text-center">
+            <h1>ATS Resume Expert</h1>
+            <p>Upload your resume and get a detailed analysis</p>
+        </div>
+        <div class="card">
+            <form id="resumeForm">
+                <div class="form-group">
+                    <label for="inputText">Job Description:</label>
+                    <textarea class="form-control" id="inputText" rows="4" placeholder="Enter job description here"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="uploadedFile">Upload your resume (PDF):</label>
+                    <input type="file" class="form-control-file" id="uploadedFile" accept=".pdf">
+                </div>
+                <div class="form-group">
+                    <label for="promptType">Select analysis type:</label>
+                    <select class="form-control" id="promptType">
+                        <option value="evaluation">Professional Evaluation</option>
+                        <option value="match_percentage">Percentage Match</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Submit</button>
+            </form>
+            <div id="response" class="mt-4"></div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#resumeForm').on('submit', function(e) {
+                e.preventDefault();
+
+                var inputText = $('#inputText').val();
+                var uploadedFile = $('#uploadedFile')[0].files[0];
+                var promptType = $('#promptType').val();
+
+                if (!inputText || !uploadedFile || !promptType) {
+                    alert('Please fill in all fields and upload a resume.');
+                    return;
+                }
+
+                var formData = new FormData();
+                formData.append('input_text', inputText);
+                formData.append('uploaded_file', uploadedFile);
+                formData.append('prompt_type', promptType);
+
+                $.ajax({
+                    url: '/analyze_resume',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        $('#response').html('<div class="alert alert-success">' + response.response + '</div>');
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMessage = xhr.status + ': ' + xhr.statusText;
+                        $('#response').html('<div class="alert alert-danger">Error - ' + errorMessage + '</div>');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
