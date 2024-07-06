@@ -84,5 +84,5 @@ def analyze_resume():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    application.run()
+    application.run( port=8000)
 
