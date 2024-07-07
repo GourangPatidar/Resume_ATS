@@ -2,4 +2,8 @@ streamlit
 google-generativeai
 python-dotenv
 pdf2image
+<<<<<<< HEAD
 Flask
+=======
+Flask
+>>>>>>> ae40341 (updated)
