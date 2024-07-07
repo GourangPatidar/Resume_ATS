@@ -50,7 +50,7 @@ def analyze_resume():
     data = request.form
     input_text = data.get('input_text')
     prompt_type = data.get('prompt_type')
-    
+
     uploaded_file = request.files.get('uploaded_file')
     if not uploaded_file:
         return jsonify({"error": "Please upload the resume"}), 400
@@ -84,5 +84,4 @@ def analyze_resume():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    application.run( port=8000)
-
+    application.run(port=8000)
