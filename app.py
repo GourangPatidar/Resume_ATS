@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.DEBUG)
 # Configure the Google Generative AI
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-application = Flask(__name__)
+app = Flask(__name__)
 
 def get_gemini_response(input_text, pdf_content, prompt):
     try:
@@ -50,11 +50,11 @@ def input_pdf_setup(uploaded_file):
         logging.error(f"Error processing PDF: {e}")
         raise
 
-@application.route('/')
+@app.route('/')
 def index():
     return render_template('index.html')
 
-@application.route('/analyze_resume', methods=['POST'])
+@app.route('/analyze_resume', methods=['POST'])
 def analyze_resume():
     data = request.form
     input_text = data.get('input_text')
@@ -94,4 +94,4 @@ def analyze_resume():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    application.run(port=8000)
+    app.run(port=8000)
