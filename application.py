@@ -6,9 +6,13 @@ import base64
 from PIL import Image
 import pdf2image
 import google.generativeai as genai
+import logging
 
 # Load environment variables
 load_dotenv()
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
 
 # Configure the Google Generative AI
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
@@ -16,12 +20,16 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 application = Flask(__name__)
 
 def get_gemini_response(input_text, pdf_content, prompt):
-    model = genai.GenerativeModel('gemini-pro-vision')
-    response = model.generate_content([input_text, pdf_content[0], prompt])
-    return response.text
+    try:
+        model = genai.GenerativeModel('gemini-pro-vision')
+        response = model.generate_content([input_text, pdf_content[0], prompt])
+        return response.text
+    except Exception as e:
+        logging.error(f"Error generating content: {e}")
+        raise
 
 def input_pdf_setup(uploaded_file):
-    if uploaded_file:
+    try:
         # Convert the PDF to image
         images = pdf2image.convert_from_bytes(uploaded_file.read())
         first_page = images[0]
@@ -38,8 +46,9 @@ def input_pdf_setup(uploaded_file):
             }
         ]
         return pdf_parts
-    else:
-        raise FileNotFoundError("No file uploaded")
+    except Exception as e:
+        logging.error(f"Error processing PDF: {e}")
+        raise
 
 @application.route('/')
 def index():
@@ -81,6 +90,7 @@ def analyze_resume():
         response = get_gemini_response(input_text, pdf_content, input_prompt)
         return jsonify({"response": response}), 200
     except Exception as e:
+        logging.error(f"Error in generating response: {e}")
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
